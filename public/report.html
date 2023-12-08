@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Generate Report</title>
+        <link rel="stylesheet" href="styles.css">
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    </head>
+    <body>
+        <header>
+            <h1>Generate Report</h1>
+        </header>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="data-management.html">Data Management</a></li>
+                <li><a href="report.html">Generate Report</a></li>
+            </ul>
+        </nav>
+        <main>
+            <h2>Select Date Range for Report</h2>
+            <label for="startDate">Start Date:</label>
+            <input id = "new" type="date" id="startDate" name="startDate">
+    
+            <label for="endDate">End Date:</label>
+            <input id = "new" type="date" id="endDate" name="endDate">
+
+            <h2>Select Manuscript for Report</h2>
+            <select id="dynamicDropdown">
+                <option value="" selected>Select a manuscript</option>
+            </select> 
+            <h2>Manuscript Physical History</h2>
+            <div id="queryResult">
+                
+            </div>
+            <h2>Manuscript Reservation History</h2>
+            <div id="queryResult1">
+                
+            </div>
+            <br>
+            <!-- Test statistics -->
+            <p>Average manuscript reservation time: 12.5 days</p>
+            <p>Total manuscript reservation time: 51 days</p>
+            <p>Time since last manuscript damage: 10,012 days</p>
+            <p>Time since last manuscript restoration: 402 days</p>
+        
+            <script>
+                $(document).ready(() => {
+                    const dropdown = $('#dynamicDropdown');
+                    const queryResult = $('#queryResult');
+                    const queryResult1 = $('#queryResult1');
+                    //for use when date is implemented
+                    //const startDate = $('#startDate');
+                    //const endDate = $('#endDate');
+                    $.get('/manuscripts', (data) => {
+                        data.forEach((manuscripts) => {
+                            dropdown.append(`<option value="${manuscripts.manuscript_id}">${manuscripts.title}</option>`);
+                        });
+                    });
+            
+                    $('#dynamicDropdown, #startDate, #endDate').on('change', () => {
+                        const selectedValue = dropdown.val();
+                        queryResult.empty();
+                        queryResult1.empty();
+                        if (selectedValue) {
+                            $.get(`/query?manuscript_id=${selectedValue}`, (queryResults) => {
+                                const table = $('<table>');
+                                const tableHeader = '<tr><th>Manuscript History ID</th><th>Event Date</th><th>Event Description</th><th>Event Notes</th></tr>';
+                                table.append(tableHeader);
+                                queryResults.forEach((result) => {
+                                    const row = `<tr><td>${result.manuscript_history_id}</td><td>${result.event_date}</td><td>${result.event_description}</td><td>${result.event_notes}</td></tr>`;
+                                    table.append(row);
+                                });
+                                queryResult.append(table);
+                            });
+                            $.get(`/query2?manuscript_id=${selectedValue}`, (queryResults) => {
+                                const table = $('<table>');
+                                const tableHeader = '<tr><th>Reservation ID</th><th>User ID</th><th>Reservation Date</th><th>Pickup Date</th><th>Return Date</th><th>Actual Return Date</th></tr>';
+                                table.append(tableHeader);
+                                queryResults.forEach((result) => {
+                                    const row = `<tr><td>${result.reservation_id}</td><td>${result.user_id}</td><td>${result.reservation_date}</td><td>${result.pickup_date}</td><td>${result.return_date}</td><td>${result.actual_return_date}</td></tr>`;
+                                    table.append(row);
+                                });
+                                queryResult1.append(table);
+                            });
+                        }
+                    });
+                });
+            </script>
+        </main>
+    </body>
+</html>

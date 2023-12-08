@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Data Management</title>
+        <link rel="stylesheet" href="styles.css">
+    </head>
+    <body>
+        <header>
+            <h1>Data Management</h1>
+        </header>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="data-management.html">Data Management</a></li>
+                <li><a href="report.html">Generate Report</a></li>
+            </ul>
+        </nav>
+        <main>
+            <h2>Add Manuscript</h2> <!-- This add works, edit and delete are not yet operational-->
+                <form action="/add-manuscript" method="post">
+                    <label for="author_id">Author id:</label>
+                    <input type="text" id="author_id" name="author_id" required>
+
+                    <label for="title">Title:</label>
+                    <input type="text" id="title" name="title" required>
+
+                    <label for="publication_date">Publication Date:</label>
+
+                    <input type="date" id="publication_date" name="publication_date">    
+                    <label for="description">Description:</label>
+
+                    <textarea id="description" name="description"></textarea>    
+                    <label for="location">Location:</label>
+
+                    <input type="text" id="location" name="location">
+                    <label for="availability_status">Availability Status:</label>
+
+                    <select id="availability_status" name="availability_status">
+                        <option value="available">Available</option>
+                        <option value="unavailable">Unavailable</option>
+                        <option value="reserved">Reserved</option>
+                    </select>
+
+                    <button type="submit">Add Manuscript</button>
+                </form>
+            <h2>Edit Manuscript</h2>
+            <form action="/edit-manuscript" method="post">
+                <label for="book_id_edit">Book ID:</label>
+                <input type="text" id="book_id_edit" name="book_id_edit" required>
+                <button type="submit">Edit Manuscript</button>
+            </form>
+            <h2>Delete Manuscript</h2>
+            <form action="/delete-manuscript" method="post">
+                <label for="book_id_delete">Book ID:</label>
+                <input type="text" id="book_id_delete" name="book_id_delete" required>
+                <button type="submit">Delete Manuscript</button>
+            </form>
+        </main>
+    </body>
+</html>
