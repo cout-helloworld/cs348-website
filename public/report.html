@@ -21,10 +21,10 @@
         <main>
             <h2>Select Date Range for Report</h2>
             <label for="startDate">Start Date:</label>
-            <input id = "new" type="date" id="startDate" name="startDate">
+            <input type="date" id="startDate" name="startDate">
     
             <label for="endDate">End Date:</label>
-            <input id = "new" type="date" id="endDate" name="endDate">
+            <input type="date" id="endDate" name="endDate">
 
             <h2>Select Manuscript for Report</h2>
             <select id="dynamicDropdown">
@@ -39,20 +39,22 @@
                 
             </div>
             <br>
-            <!-- Test statistics -->
-            <p>Average manuscript reservation time: 12.5 days</p>
-            <p>Total manuscript reservation time: 51 days</p>
-            <p>Time since last manuscript damage: 10,012 days</p>
-            <p>Time since last manuscript restoration: 402 days</p>
-        
+            <p>Average manuscript reservation time: <span id="avg_res"></span> days</p>
+            <p>Total manuscript reservation time: <span id="sum_res"></span> days</p>
+            <p>Time since last manuscript damage: <span id="last_damage"></span> days</p>
+            <p>Time since last manuscript restoration:  <span id="last_res"></span> days</p>
+            <!-- Above is the structure of the report page. Below is the scripts that populate the elements above -->
             <script>
                 $(document).ready(() => {
                     const dropdown = $('#dynamicDropdown');
                     const queryResult = $('#queryResult');
                     const queryResult1 = $('#queryResult1');
-                    //for use when date is implemented
-                    //const startDate = $('#startDate');
-                    //const endDate = $('#endDate');
+                    const queryAvgRes = $('#avg_res')
+                    const querySumRes = $('#sum_res')
+                    const queryLastDamage = $('#last_damage')
+                    const queryLastRes = $('#last_res')
+                    const startDate = $('#startDate');
+                    const endDate = $('#endDate');
                     $.get('/manuscripts', (data) => {
                         data.forEach((manuscripts) => {
                             dropdown.append(`<option value="${manuscripts.manuscript_id}">${manuscripts.title}</option>`);
@@ -63,8 +65,12 @@
                         const selectedValue = dropdown.val();
                         queryResult.empty();
                         queryResult1.empty();
+                        queryAvgRes.empty();
+                        querySumRes.empty();
+                        queryLastDamage.empty();
+                        queryLastRes.empty();
                         if (selectedValue) {
-                            $.get(`/query?manuscript_id=${selectedValue}`, (queryResults) => {
+                            $.get(`/query?manuscript_id=${selectedValue}&startDate=${startDate.val()}&endDate=${endDate.val()}`, (queryResults) => {
                                 const table = $('<table>');
                                 const tableHeader = '<tr><th>Manuscript History ID</th><th>Event Date</th><th>Event Description</th><th>Event Notes</th></tr>';
                                 table.append(tableHeader);
@@ -74,7 +80,7 @@
                                 });
                                 queryResult.append(table);
                             });
-                            $.get(`/query2?manuscript_id=${selectedValue}`, (queryResults) => {
+                            $.get(`/query2?manuscript_id=${selectedValue}&startDate=${startDate.val()}&endDate=${endDate.val()}`, (queryResults) => {
                                 const table = $('<table>');
                                 const tableHeader = '<tr><th>Reservation ID</th><th>User ID</th><th>Reservation Date</th><th>Pickup Date</th><th>Return Date</th><th>Actual Return Date</th></tr>';
                                 table.append(tableHeader);
@@ -83,6 +89,26 @@
                                     table.append(row);
                                 });
                                 queryResult1.append(table);
+                            });
+                            $.get(`/avg_res?manuscript_id=${selectedValue}`, (queryResults) => {
+                                queryResults.forEach((result) => {
+                                    $('#avg_res').text(result.res);
+                                });
+                            });
+                            $.get(`/sum_res?manuscript_id=${selectedValue}`, (queryResults) => {
+                                queryResults.forEach((result) => {
+                                    $('#sum_res').text(result.res);
+                                });
+                            });
+                            $.get(`/last_damage?manuscript_id=${selectedValue}`, (queryResults) => {
+                                queryResults.forEach((result) => {
+                                    $('#last_damage').text(result.res);
+                                });
+                            });
+                            $.get(`/last_res?manuscript_id=${selectedValue}`, (queryResults) => {
+                                queryResults.forEach((result) => {
+                                    $('#last_res').text(result.res);
+                                });
                             });
                         }
                     });

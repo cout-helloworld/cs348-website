@@ -18,8 +18,11 @@
             </ul>
         </nav>
         <main>
-            <h2>Add Manuscript</h2> <!-- This add works, edit and delete are not yet operational-->
-                <form action="/add-manuscript" method="post">
+            <h2>Add/Edit Manuscript</h2>
+                <form action="/add-edit-manuscript" method="post">
+                    <label for="manuscript_id">Manuscript ID (optional, only include to replace an existing manuscript):</label>
+                    <input type="text" id="manuscript_id" name="manuscript_id">
+
                     <label for="author_id">Author id:</label>
                     <input type="text" id="author_id" name="author_id" required>
 
@@ -43,18 +46,12 @@
                         <option value="reserved">Reserved</option>
                     </select>
 
-                    <button type="submit">Add Manuscript</button>
+                    <button type="submit">Add/Edit Manuscript</button>
                 </form>
-            <h2>Edit Manuscript</h2>
-            <form action="/edit-manuscript" method="post">
-                <label for="book_id_edit">Book ID:</label>
-                <input type="text" id="book_id_edit" name="book_id_edit" required>
-                <button type="submit">Edit Manuscript</button>
-            </form>
             <h2>Delete Manuscript</h2>
             <form action="/delete-manuscript" method="post">
-                <label for="book_id_delete">Book ID:</label>
-                <input type="text" id="book_id_delete" name="book_id_delete" required>
+                <label for="manuscript_id_delete">Manuscript ID:</label>
+                <input type="text" id="manuscript_id_delete" name="manuscript_id_delete" required>
                 <button type="submit">Delete Manuscript</button>
             </form>
         </main>
